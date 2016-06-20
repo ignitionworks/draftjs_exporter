@@ -90,7 +90,7 @@ module DraftjsExporter
     def build_inline_style_commands(inline_style_ranges)
       inline_style_ranges.flat_map { |style|
         data = style.fetch(:style)
-        start, stop = range_start_stop(entity)
+        start, stop = range_start_stop(style)
         [
           Command.new(:start_inline_style, start, data),
           Command.new(:stop_inline_style, stop, data)
