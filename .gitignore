@@ -1,0 +1,14 @@
+# Ignore built gems
+*.gem
+
+# Ignore Rubymine
+/.idea
+
+# Ignore bundler settings
+/.bundle
+
+# Ignore Gemfile.lock as the Gemspec dictates our requirements
+/Gemfile.lock
+
+# Ignore OSX Files
+.DS_Store

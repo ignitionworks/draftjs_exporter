@@ -1,0 +1,14 @@
+AllCops:
+  TargetRubyVersion: 2.1
+
+Style/Documentation:
+  Enabled: false
+
+BlockDelimiters:
+  EnforcedStyle: semantic
+
+Metrics/LineLength:
+  Max: 110
+
+Style/MultilineBlockChain:
+  Enabled: false
