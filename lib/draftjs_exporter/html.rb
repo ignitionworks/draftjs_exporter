@@ -90,8 +90,7 @@ module DraftjsExporter
     def build_inline_style_commands(inline_style_ranges)
       inline_style_ranges.flat_map { |style|
         data = style.fetch(:style)
-        start = style.fetch(:offset)
-        stop = start + style.fetch(:length)
+        start, stop = range_start_stop(entity)
         [
           Command.new(:start_inline_style, start, data),
           Command.new(:stop_inline_style, stop, data)
@@ -102,13 +101,18 @@ module DraftjsExporter
     def build_entity_commands(entity_ranges)
       entity_ranges.flat_map { |entity|
         data = entity.fetch(:key)
-        start = entity.fetch(:offset)
-        stop = start + entity.fetch(:length)
+        start, stop = range_start_stop(entity)
         [
           Command.new(:start_entity, start, data),
           Command.new(:stop_entity, stop, data)
         ]
       }
+    end
+
+    def range_start_stop(range)
+      start = range.fetch(:offset)
+      stop = start + range.fetch(:length)
+      [start, stop]
     end
   end
 end
