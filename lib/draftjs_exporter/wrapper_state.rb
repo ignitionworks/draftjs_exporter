@@ -41,10 +41,7 @@ module DraftjsExporter
       new_options = nokogiri_options(*options.fetch(:wrapper))
       return wrapper_element if new_options == wrapper_options
 
-      document.create_element(*new_options).tap do |new_element|
-        reset_wrapper.add_child(new_element)
-        set_wrapper(new_element, new_options)
-      end
+      create_wrapper(new_options)
     end
 
     def reset_wrapper
@@ -61,6 +58,13 @@ module DraftjsExporter
 
     def block_options(type)
       block_map.fetch(type).fetch(:element)
+    end
+
+    def create_wrapper(options)
+      document.create_element(*options).tap do |new_element|
+        reset_wrapper.add_child(new_element)
+        set_wrapper(new_element, options)
+      end
     end
   end
 end
