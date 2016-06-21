@@ -2,6 +2,7 @@
 
 [![Circle CI](https://circleci.com/gh/ignitionworks/draftjs_exporter/tree/master.svg?style=shield)](https://circleci.com/gh/ignitionworks/draftjs_exporter/tree/master)
 [![Code Climate](https://codeclimate.com/github/ignitionworks/draftjs_exporter/badges/gpa.svg)](https://codeclimate.com/github/ignitionworks/draftjs_exporter)
+[![Test Coverage](https://codeclimate.com/github/ignitionworks/draftjs_exporter/badges/coverage.svg)](https://codeclimate.com/github/ignitionworks/draftjs_exporter/coverage)
 
 [Draft.js](https://facebook.github.io/draft-js/) is a framework for
 building rich text editors. However, it does not support exporting
