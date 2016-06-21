@@ -24,55 +24,105 @@ RSpec.describe DraftjsExporter::HTML do
   end
 
   describe '#call' do
-    it 'decodes the content_state to html' do
-      input = {
-        entityMap: {
-          '0' => {
-            type: 'LINK',
-            mutability: 'MUTABLE',
-            data: {
-              url: 'http://example.com'
+    context 'with different blocks' do
+      it 'decodes the content_state to html' do
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: '5s7g9',
+              text: 'Header',
+              type: 'header-one',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem5p',
+              text: 'some paragraph text',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
             }
-          }
-        },
-        blocks: [
-          {
-            key: '5s7g9',
-            text: 'Header',
-            type: 'header-one',
-            depth: 0,
-            inlineStyleRanges: [],
-            entityRanges: []
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+<h1>Header</h1><div>some paragraph text</div>
+        OUTPUT
+
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+    end
+
+    context 'with inline styles' do
+      it 'decodes the content_state to html' do
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'some paragraph text',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [
+                {
+                  offset: 0,
+                  length: 4,
+                  style: 'ITALIC'
+                }
+              ],
+              entityRanges: []
+            }
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+<div>
+<span style="fontStyle: italic;">some</span> paragraph text</div>
+        OUTPUT
+
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+    end
+
+    context 'with entities' do
+      it 'decodes the content_state to html' do
+        input = {
+          entityMap: {
+            '0' => {
+              type: 'LINK',
+              mutability: 'MUTABLE',
+              data: {
+                url: 'http://example.com'
+              }
+            }
           },
-          {
-            key: 'dem5p',
-            text: 'some paragraph text',
-            type: 'unstyled',
-            depth: 0,
-            inlineStyleRanges: [
-              {
-                offset: 0,
-                length: 4,
-                style: 'ITALIC'
-              }
-            ],
-            entityRanges: [
-              {
-                offset: 5,
-                length: 9,
-                key: 0
-              }
-            ]
-          }
-        ]
-      }
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'some paragraph text',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 0
+                }
+              ]
+            }
+          ]
+        }
 
-      expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>
-<span style="fontStyle: italic;">some</span> <a href="http://example.com">paragraph</a> text</div>
-      OUTPUT
+        expected_output = <<-OUTPUT.strip
+<div>some <a href="http://example.com">paragraph</a> text</div>
+        OUTPUT
 
-      expect(mapper.call(input)).to eq(expected_output)
+        expect(mapper.call(input)).to eq(expected_output)
+      end
     end
   end
 end
