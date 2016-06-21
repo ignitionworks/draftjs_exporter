@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'nokogiri'
+require 'draftjs_exporter/wrapper_state'
 require 'draftjs_exporter/entity_state'
 require 'draftjs_exporter/style_state'
 require 'draftjs_exporter/command'
@@ -15,22 +16,16 @@ module DraftjsExporter
     end
 
     def call(content_state)
-      content_state.fetch(:blocks, []).map { |block|
-        content_state_block(block, content_state.fetch(:entityMap, {}))
-      }.inject(:+)
+      wrapper_state = WrapperState.new(block_map)
+      content_state.fetch(:blocks, []).each do |block|
+        element = wrapper_state.element_for(block)
+        entity_map = content_state.fetch(:entityMap, {})
+        block_contents(element, block, entity_map)
+      end
+      wrapper_state.to_s
     end
 
     private
-
-    def content_state_block(block, entity_map)
-      document = Nokogiri::HTML::Document.new
-      fragment = Nokogiri::HTML::DocumentFragment.new(document)
-      type = block.fetch(:type, 'unstyled')
-      element = document.create_element(*block_options(type)) { |e|
-        block_contents(e, block, entity_map)
-      }
-      fragment.add_child(element).to_s
-    end
 
     def block_contents(element, block, entity_map)
       style_state = StyleState.new(style_map)
@@ -43,18 +38,6 @@ module DraftjsExporter
 
         add_node(entity_state.current_parent, text, style_state)
       end
-    end
-
-    def block_options(type)
-      options = block_map.fetch(type)
-      return [options.fetch(:element)] unless options.key?(:wrapper)
-
-      wrapper = options.fetch(:wrapper)
-      name = wrapper[0]
-      config = wrapper[1] || {}
-      options = {}
-      options[:class] = config.fetch(:className) if config.key?(:className)
-      [name, options]
     end
 
     def add_node(element, text, state)

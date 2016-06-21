@@ -168,5 +168,37 @@ RSpec.describe DraftjsExporter::HTML do
         expect { mapper.call(input) }.to raise_error(DraftjsExporter::InvalidEntity)
       end
     end
+
+    context 'with wrapped blocks' do
+      it 'decodes the content_state to html' do
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'item1',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem5p',
+              text: 'item2',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            }
+          ]
+        }
+
+        expected_output = <<-EOS.strip
+<ul class="public-DraftStyleDefault-ul">\n<li>item1</li>\n<li>item2</li>\n</ul>
+EOS
+
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+    end
   end
 end
