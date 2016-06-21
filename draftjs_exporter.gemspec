@@ -25,10 +25,10 @@ Gem::Specification.new do |s|
     SPEC_DIR.join('**/*')
   ].flat_map { |p| Pathname.glob(p) }.map { |p| p.relative_path_from(ROOT_DIR).to_s }
 
-  s.add_runtime_dependency 'nokogiri', '~> 1.6.0'
+  s.add_runtime_dependency 'nokogiri', '~> 1.6', '>= 1.6.0'
 
-  s.add_development_dependency 'rspec', '~> 3.4.0'
-  s.add_development_dependency 'rubocop', '~> 0.40.0'
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.5.0'
-  s.add_development_dependency 'simplecov', '~> 0.11.0'
+  s.add_development_dependency 'rspec', '~> 3.4', '>= 3.4.0'
+  s.add_development_dependency 'rubocop', '~> 0.40', '>= 0.40.0'
+  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.5', '>= 0.5.0'
+  s.add_development_dependency 'simplecov', '~> 0.11', '>= 0.11.0'
 end
