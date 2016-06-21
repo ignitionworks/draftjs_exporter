@@ -80,7 +80,7 @@ RSpec.describe DraftjsExporter::HTML do
 
         expected_output = <<-OUTPUT.strip
 <div>
-<span style="fontStyle: italic;">some</span> paragraph text</div>
+<span style="font-style: italic;">some</span> paragraph text</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)

@@ -30,8 +30,12 @@ module DraftjsExporter
       styles.map { |style|
         style_map.fetch(style)
       }.inject({}, :merge).map { |key, value|
-        "#{key}: #{value};"
+        "#{hyphenize(key)}: #{value};"
       }.join
+    end
+
+    def hyphenize(string)
+      string.to_s.gsub(/[A-Z]/) { |match| "-#{match.downcase}" }
     end
   end
 end
