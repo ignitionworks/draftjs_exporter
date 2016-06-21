@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 require 'draftjs_exporter/entities/null'
+require 'draftjs_exporter/error'
 
 module DraftjsExporter
+  class InvalidEntity < DraftjsExporter::Error; end
+
   class EntityState
     attr_reader :entity_decorators, :entity_map, :entity_stack, :root_element
 
@@ -40,7 +43,7 @@ module DraftjsExporter
       _element, expected_entity_details = entity_stack.last
 
       if expected_entity_details != entity_details
-        raise "Invalid entity. Expected #{expected_entity_details.inspect} got #{entity_details.inspect}"
+        raise InvalidEntity, "Expected #{expected_entity_details.inspect} got #{entity_details.inspect}"
       end
 
       entity_stack.pop

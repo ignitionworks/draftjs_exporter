@@ -123,6 +123,50 @@ RSpec.describe DraftjsExporter::HTML do
 
         expect(mapper.call(input)).to eq(expected_output)
       end
+
+      it 'throws an error if entities cross over' do
+        input = {
+          entityMap: {
+            '0' => {
+              type: 'LINK',
+              mutability: 'MUTABLE',
+              data: {
+                url: 'http://foo.example.com'
+              }
+            },
+            '1' => {
+              type: 'LINK',
+              mutability: 'MUTABLE',
+              data: {
+                url: 'http://bar.example.com'
+              }
+            }
+          },
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'some paragraph text',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 0
+                },
+                {
+                  offset: 2,
+                  length: 9,
+                  key: 1
+                }
+              ]
+            }
+          ]
+        }
+
+        expect { mapper.call(input) }.to raise_error(DraftjsExporter::InvalidEntity)
+      end
     end
   end
 end
