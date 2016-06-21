@@ -13,7 +13,11 @@ Gem::Specification.new do |s|
   s.version               = DraftjsExporter::VERSION
   s.licenses              = ['MIT']
   s.summary               = 'Export Draft.js content state into HTML'
-  s.description           = File.read(ROOT_DIR.join('README.md'))
+  s.description           = <<-EOS
+Draft.js is a framework for building rich text editors. However, it does not support exporting documents at
+HTML. This gem is designed to take the raw `ContentState` (output of `convertToRaw`) from Draft.js and convert
+it to HTML using Ruby.
+EOS
   s.authors               = ['Theo Cushion']
   s.email                 = 'theo@ignition.works'
   s.homepage              = 'https://github.com/ignitionworks/draftjs_exporter'
