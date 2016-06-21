@@ -83,36 +83,20 @@ module DraftjsExporter
         Command.new(:start_text, 0),
         Command.new(:stop_text, block.fetch(:text).size)
       ] +
-        build_inline_style_commands(block.fetch(:inlineStyleRanges)) +
-        build_entity_commands(block.fetch(:entityRanges))
+        build_range_commands(:inline_style, :style, block.fetch(:inlineStyleRanges)) +
+        build_range_commands(:entity, :key, block.fetch(:entityRanges))
     end
 
-    def build_inline_style_commands(inline_style_ranges)
-      inline_style_ranges.flat_map { |style|
-        data = style.fetch(:style)
-        start, stop = range_start_stop(style)
+    def build_range_commands(name, data_key, ranges)
+      ranges.flat_map { |range|
+        data = range.fetch(data_key)
+        start = range.fetch(:offset)
+        stop = start + range.fetch(:length)
         [
-          Command.new(:start_inline_style, start, data),
-          Command.new(:stop_inline_style, stop, data)
+          Command.new("start_#{name}".to_sym, start, data),
+          Command.new("stop_#{name}".to_sym, stop, data)
         ]
       }
-    end
-
-    def build_entity_commands(entity_ranges)
-      entity_ranges.flat_map { |entity|
-        data = entity.fetch(:key)
-        start, stop = range_start_stop(entity)
-        [
-          Command.new(:start_entity, start, data),
-          Command.new(:stop_entity, stop, data)
-        ]
-      }
-    end
-
-    def range_start_stop(range)
-      start = range.fetch(:offset)
-      stop = start + range.fetch(:length)
-      [start, stop]
     end
   end
 end
