@@ -76,7 +76,7 @@ exporter.call({
     }
   ]
 })
-# => "<h1>Header</h1><div>\n<span style=\"fontStyle: italic;\">some</span> <a href=\"http://example.com\">paragraph</a> text</div>"
+# => "<h1>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\">paragraph</a> text</div>"
 ```
 
 ## Tests
