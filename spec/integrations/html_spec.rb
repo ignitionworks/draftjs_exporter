@@ -232,9 +232,9 @@ RSpec.describe DraftjsExporter::HTML do
           ]
         }
 
-        expected_output = <<-EOS.strip
+        expected_output = <<-OUTPUT.strip
 <ul class="public-DraftStyleDefault-ul">\n<li>item1</li>\n<li>item2</li>\n</ul>
-EOS
+        OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
       end
