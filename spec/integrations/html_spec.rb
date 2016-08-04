@@ -124,6 +124,45 @@ RSpec.describe DraftjsExporter::HTML do
         expect(mapper.call(input)).to eq(expected_output)
       end
 
+      context 'with deeply_symbolized entities' do
+        it 'decodes the content_state to html' do
+          input = {
+            entityMap: {
+              :'0' => {
+                type: 'LINK',
+                mutability: 'MUTABLE',
+                data: {
+                  url: 'http://example.com'
+                }
+              }
+            },
+            blocks: [
+              {
+                key: 'dem5p',
+                text: 'some paragraph text',
+                type: 'unstyled',
+                depth: 0,
+                inlineStyleRanges: [],
+                entityRanges: [
+                  {
+                    offset: 5,
+                    length: 9,
+                    key: 0
+                  }
+                ]
+              }
+            ]
+          }
+
+          expected_output = <<-OUTPUT.strip
+<div>some <a href="http://example.com">paragraph</a> text</div>
+          OUTPUT
+
+          expect(mapper.call(input)).to eq(expected_output)
+        end
+      end
+
+
       it 'throws an error if entities cross over' do
         input = {
           entityMap: {

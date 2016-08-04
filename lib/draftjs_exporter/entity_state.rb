@@ -31,7 +31,8 @@ module DraftjsExporter
     private
 
     def start_command(command)
-      entity_details = entity_map.fetch(command.data.to_s)
+      entity_details = entity_for(command.data)
+
       decorator = entity_decorators.fetch(entity_details.fetch(:type))
       parent_element = entity_stack.last.first
       new_element = decorator.call(parent_element, entity_details)
@@ -39,7 +40,7 @@ module DraftjsExporter
     end
 
     def stop_command(command)
-      entity_details = entity_map.fetch(command.data.to_s)
+      entity_details = entity_for(command.data)
       _element, expected_entity_details = entity_stack.last
 
       if expected_entity_details != entity_details
@@ -47,6 +48,11 @@ module DraftjsExporter
       end
 
       entity_stack.pop
+    end
+
+    def entity_for(key)
+      entity_keys = [key.to_s, key.to_s.to_sym]
+      entity_keys.map { |key| entity_map.fetch(key, nil) }.compact.first
     end
   end
 end
