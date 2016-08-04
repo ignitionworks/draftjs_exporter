@@ -16,7 +16,7 @@ from Draft.js and convert it to HTML using Ruby.
 # Create configuration for entities and styles
 config = {
   entity_decorators: {
-    'LINK' => DraftjsExporter::Entities::Link.new
+    'LINK' => DraftjsExporter::Entities::Link.new(className: 'link')
   },
   block_map: {
     'header-one' => { element: 'h1' },
@@ -76,7 +76,7 @@ exporter.call({
     }
   ]
 })
-# => "<h1>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\">paragraph</a> text</div>"
+# => "<h1>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div>"
 ```
 
 ## Tests

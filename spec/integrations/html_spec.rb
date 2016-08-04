@@ -7,7 +7,7 @@ RSpec.describe DraftjsExporter::HTML do
   subject(:mapper) do
     described_class.new(
       entity_decorators: {
-        'LINK' => DraftjsExporter::Entities::Link.new
+        'LINK' => DraftjsExporter::Entities::Link.new(className: 'foobar-baz')
       },
       block_map: {
         'header-one' => { element: 'h1' },
@@ -118,7 +118,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com">paragraph</a> text</div>
+<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -155,7 +155,7 @@ RSpec.describe DraftjsExporter::HTML do
           }
 
           expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com">paragraph</a> text</div>
+<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
           OUTPUT
 
           expect(mapper.call(input)).to eq(expected_output)
