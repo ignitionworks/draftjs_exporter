@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'draftjs_exporter/entities/link'
 require 'draftjs_exporter/entities/null'
 require 'draftjs_exporter/error'
 
