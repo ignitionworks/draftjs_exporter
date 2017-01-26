@@ -45,7 +45,8 @@ module DraftjsExporter
       node = if state.text?
                document.create_text_node(text)
              else
-               document.create_element('span', text, state.element_attributes)
+               tag = state.style_map[state.styles[0]].delete(:element) { 'span' }
+               document.create_element(tag, text, state.element_attributes)
              end
       element.add_child(node)
     end
