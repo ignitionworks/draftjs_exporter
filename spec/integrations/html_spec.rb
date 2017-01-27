@@ -18,7 +18,9 @@ RSpec.describe DraftjsExporter::HTML do
         'unstyled' => { element: 'div' }
       },
       style_map: {
-        'ITALIC' => { fontStyle: 'italic' }
+        'ITALIC' => { fontStyle: 'italic' },
+        'BOLD' => { fontStyle: 'bold' },
+        'UNDERLINE' => { fontStyle: 'underline' }
       }
     )
   end
@@ -83,6 +85,45 @@ RSpec.describe DraftjsExporter::HTML do
 <span style="font-style: italic;">some</span> paragraph text</div>
         OUTPUT
 
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+
+      it 'decodes the content_state to html with cross over styles' do
+        input = {
+          "entityMap": {},
+          "blocks": [
+            {
+              "key": "d9imo",
+              "text": "bold underline italic",
+              "type": "unstyled",
+              "depth": 0,
+              "inlineStyleRanges": [
+                {
+                  "offset": 0,
+                  "length": 21,
+                  "style": "BOLD"
+                },
+                {
+                  "offset": 0,
+                  "length": 21,
+                  "style": "ITALIC"
+                },
+                {
+                  "offset": 0,
+                  "length": 21,
+                  "style": "UNDERLINE"
+                }
+              ],
+              "entityRanges": [],
+              "data": {}
+            }
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+<div>
+<span style="font-style: bold;"><span style="font-style: italic;"><span style="font-style: underline;">bold underline italic</span></span></span></div>
+        OUTPUT
         expect(mapper.call(input)).to eq(expected_output)
       end
     end

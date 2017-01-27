@@ -26,6 +26,14 @@ module DraftjsExporter
       { style: styles_css }
     end
 
+    def element_attributes_for(style)
+      return {} unless styles.any?
+      result = [style_map.fetch(style)].inject({}, :merge).delete_if { |key, _| key == :element }.map { |key, value|
+        "#{hyphenize(key)}: #{value};"
+      }.join
+      { style: result }
+    end
+
     def styles_css
       styles.map { |style|
         style_map.fetch(style)
