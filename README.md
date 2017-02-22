@@ -79,6 +79,132 @@ exporter.call({
 # => "<h1>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div>"
 ```
 
+### Default values
+Use config specified in `default` keys if it finds unknown entity_decorators, block_map or style_map
+```ruby
+config = {
+  entity_decorators: {
+    'default' => DraftjsExporter::Entities::Link.new(className: 'link')
+  },
+  block_map: {
+    'default' => { element: 'h1' },
+  },
+  style_map: {
+    'default' => { fontStyle: 'default' }
+  }
+}
+
+exporter = DraftjsExporter::HTML.new(config)
+
+exporter.call({
+  entityMap: {
+    '0' => {
+      type: 'LINK',
+      mutability: 'MUTABLE',
+      data: {
+        url: 'http://example.com'
+      }
+    }
+  },
+  blocks: [
+    {
+      key: '5s7g9',
+      text: 'Header',
+      type: 'header-one',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: []
+    },
+    {
+      key: 'dem5p',
+      text: 'some paragraph text',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 0,
+          length: 4,
+          style: 'ITALIC'
+        }
+      ],
+      entityRanges: [
+        {
+          offset: 5,
+          length: 9,
+          key: 0
+        }
+      ]
+    }
+  ]
+})
+# => "<h1>Header</h1><div>\n<span style=\"font-style: default;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div>"
+```
+
+### Specify custom element for style, different to span
+```ruby
+config = {
+  entity_decorators: {
+    'LINK' => DraftjsExporter::Entities::Link.new(className: 'link')
+  },
+  block_map: {
+    'header-one' => { element: 'h1' },
+    'unordered-list-item' => {
+      element: 'li',
+      wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
+    },
+    'unstyled' => { element: 'div' }
+  },
+  style_map: {
+    'ITALIC' => { fontStyle: 'italic', element: 'i' }
+  }
+}
+
+exporter = DraftjsExporter::HTML.new(config)
+
+exporter.call({
+  entityMap: {
+    '0' => {
+      type: 'LINK',
+      mutability: 'MUTABLE',
+      data: {
+        url: 'http://example.com'
+      }
+    }
+  },
+  blocks: [
+    {
+      key: '5s7g9',
+      text: 'Header',
+      type: 'header-one',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: []
+    },
+    {
+      key: 'dem5p',
+      text: 'some paragraph text',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 0,
+          length: 4,
+          style: 'ITALIC'
+        }
+      ],
+      entityRanges: [
+        {
+          offset: 5,
+          length: 9,
+          key: 0
+        }
+      ]
+    }
+  ]
+})
+# => "<h1>Header</h1><div>\n<i style=\"font-style: italic;\">some</i> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div>"
+```
+
 ## Tests
 
 ```bash

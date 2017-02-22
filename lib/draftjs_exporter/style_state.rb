@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 module DraftjsExporter
   class StyleState
+    extend DefaultItem
+    has_default_item_in(:style_map)
+
     attr_reader :styles, :style_map
 
     def initialize(style_map)
@@ -28,7 +31,7 @@ module DraftjsExporter
 
     def element_attributes_for(style)
       return {} unless styles.any?
-      result = [style_map.fetch(style)].inject({}, :merge).delete_if { |key, _| key == :element }.map { |key, value|
+      result = [fetch_or_default_item(style)].inject({}, :merge).delete_if { |key, _| key == :element }.map { |key, value|
         "#{hyphenize(key)}: #{value};"
       }.join
       { style: result }
@@ -36,7 +39,7 @@ module DraftjsExporter
 
     def styles_css
       styles.map { |style|
-        style_map.fetch(style)
+        fetch_or_default_item(style)
       }.inject({}, :merge).map { |key, value|
         "#{hyphenize(key)}: #{value};"
       }.join
