@@ -6,6 +6,9 @@ module DraftjsExporter
   class InvalidEntity < DraftjsExporter::Error; end
 
   class EntityState
+    extend DefaultItem
+    has_default_item_in(:entity_decorators)
+
     attr_reader :entity_decorators, :entity_map, :entity_stack, :root_element
 
     def initialize(root_element, entity_decorators, entity_map)
@@ -33,7 +36,7 @@ module DraftjsExporter
     def start_command(command)
       entity_details = entity_for(command.data)
 
-      decorator = entity_decorators.fetch(entity_details.fetch(:type))
+      decorator = fetch_or_default_item(entity_details.fetch(:type))
       parent_element = entity_stack.last.first
       new_element = decorator.call(parent_element, entity_details)
       entity_stack.push([new_element, entity_details])
