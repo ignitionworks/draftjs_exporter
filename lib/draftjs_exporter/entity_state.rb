@@ -33,7 +33,7 @@ module DraftjsExporter
     def start_command(command)
       entity_details = entity_for(command.data)
 
-      decorator = entity_decorators.fetch(entity_details.fetch(:type))
+      decorator = fetch_or_default_entity(entity_details.fetch(:type))
       parent_element = entity_stack.last.first
       new_element = decorator.call(parent_element, entity_details)
       entity_stack.push([new_element, entity_details])
@@ -53,6 +53,16 @@ module DraftjsExporter
     def entity_for(key)
       entity_keys = [key.to_s, key.to_s.to_sym]
       entity_keys.map { |key| entity_map.fetch(key, nil) }.compact.first
+    end
+
+    def fetch_or_default_entity(type)
+      if !entity_decorators.fetch(type, nil).nil?
+        entity_decorators.fetch(type)
+      elsif !entity_decorators.fetch('default', nil).nil?
+        entity_decorators.fetch('default')
+      else
+        entity_decorators.fetch(type) # Raise exception to be backward compatible
+      end
     end
   end
 end
