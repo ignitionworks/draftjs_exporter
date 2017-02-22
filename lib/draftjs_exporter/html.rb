@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'nokogiri'
+require 'draftjs_exporter/helpers/default_item'
 require 'draftjs_exporter/wrapper_state'
 require 'draftjs_exporter/entity_state'
 require 'draftjs_exporter/style_state'
@@ -46,7 +47,7 @@ module DraftjsExporter
         element.add_child(document.create_text_node(text))
       else
         state.styles.each_with_index do |style, index|
-          tag = state.fetch_or_default_style(style).fetch(:element, 'span')
+          tag = state.fetch_or_default_item(style).fetch(:element, 'span')
           if index == state.styles.size - 1
             node = document.create_element(tag, text, state.element_attributes_for(style))
           else

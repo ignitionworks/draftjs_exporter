@@ -1,5 +1,8 @@
 module DraftjsExporter
   class WrapperState
+    extend DefaultItem
+    has_default_item_in(:block_map)
+
     def initialize(block_map)
       @block_map = block_map
       @document = Nokogiri::HTML::Document.new
@@ -35,7 +38,7 @@ module DraftjsExporter
     end
 
     def parent_for(type)
-      options = fetch_or_default_block(type)
+      options = fetch_or_default_item(type)
       return reset_wrapper unless options.key?(:wrapper)
 
       new_options = nokogiri_options(*options.fetch(:wrapper))
@@ -57,23 +60,13 @@ module DraftjsExporter
     end
 
     def block_options(type)
-      fetch_or_default_block(type).fetch(:element)
+      fetch_or_default_item(type).fetch(:element)
     end
 
     def create_wrapper(options)
       document.create_element(*options).tap do |new_element|
         reset_wrapper.add_child(new_element)
         set_wrapper(new_element, options)
-      end
-    end
-
-    def fetch_or_default_block(type)
-      if !block_map.fetch(type, nil).nil?
-        block_map.fetch(type)
-      elsif !block_map.fetch('default', nil).nil?
-        block_map.fetch('default')
-      else
-        block_map.fetch(type) # Raise exception to be backward compatible
       end
     end
   end
