@@ -25,6 +25,27 @@ RSpec.describe DraftjsExporter::HTML do
     )
   end
 
+  subject(:mapper_with_style_element) do
+    described_class.new(
+      entity_decorators: {
+        'LINK' => DraftjsExporter::Entities::Link.new(className: 'foobar-baz'),
+      },
+      block_map: {
+        'header-one' => { element: 'h1' },
+        'unordered-list-item' => {
+          element: 'li',
+          wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
+        },
+        'unstyled' => { element: 'div' },
+      },
+      style_map: {
+        'ITALIC' => { element: 'i' },
+        'BOLD' => { element: 'b' },
+        'UNDERLINE' => { element: 'u', fontStyle: 'underline' },
+      }
+    )
+  end
+
   subject(:mapper_with_defaults) do
     described_class.new(
       entity_decorators: {
@@ -207,6 +228,47 @@ RSpec.describe DraftjsExporter::HTML do
         OUTPUT
         expect(mapper.call(input)).to eq(expected_output)
       end
+
+      it 'decodes the content_state to html with specified styles elements' do
+        input = {
+          "entityMap": {},
+          "blocks": [
+            {
+              "key": "d9imo",
+              "text": "bold underline italic",
+              "type": "unstyled",
+              "depth": 0,
+              "inlineStyleRanges": [
+                {
+                  "offset": 0,
+                  "length": 21,
+                  "style": "BOLD"
+                },
+                {
+                  "offset": 0,
+                  "length": 21,
+                  "style": "ITALIC"
+                },
+                {
+                  "offset": 0,
+                  "length": 21,
+                  "style": "UNDERLINE"
+                }
+              ],
+              "entityRanges": [],
+              "data": {}
+            }
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+<div>
+<b style=""><i style=""><u style="font-style: underline;">bold underline italic</u></i></b></div>
+        OUTPUT
+        expect(mapper_with_style_element.call(input)).to eq(expected_output)
+      end
+
+
 
       it 'throws an exception if it has not specified style' do
         input = {
