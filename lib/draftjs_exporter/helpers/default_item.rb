@@ -8,6 +8,9 @@ module DraftjsExporter
           if !self.__send__(map_symbol).fetch(key, nil).nil?
             self.__send__(map_symbol).fetch(key)
           elsif !self.__send__(map_symbol).fetch('default', nil).nil?
+            if DraftjsExporter.logger.respond_to?(:warn)
+              DraftjsExporter.logger.warn "DraftjsExporter met unknown key: '#{key}'. Default config will be used instead."
+            end
             self.__send__(map_symbol).fetch('default')
           else
             self.__send__(map_symbol).fetch(key) # Raise exception if default attr is not present, to be backward compatible

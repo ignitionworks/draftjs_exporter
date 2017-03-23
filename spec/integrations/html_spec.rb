@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 require 'spec_helper'
-require 'draftjs_exporter/html'
-require 'draftjs_exporter/entities/link'
+require 'draftjs_exporter'
 
 RSpec.describe DraftjsExporter::HTML do
+  DraftjsExporter.logger = Logger.new(STDOUT)
+
   subject(:mapper) do
     described_class.new(
       entity_decorators: {
