@@ -139,6 +139,9 @@ exporter.call({
 })
 # => "<h1>Header</h1><div>\n<span style=\"font-style: default;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div>"
 ```
+To see messages about missing properties when 'default' properties are used, define logger: 
+
+`DraftjsExporter.logger = Logger.new(STDOUT)`
 
 ### Specify custom element for style, different to span
 ```ruby
