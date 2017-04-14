@@ -1,5 +1,8 @@
 module DraftjsExporter
   class WrapperState
+    extend DefaultItem
+    has_default_item_in(:block_map)
+
     def initialize(block_map)
       @block_map = block_map
       @document = Nokogiri::HTML::Document.new
@@ -35,7 +38,7 @@ module DraftjsExporter
     end
 
     def parent_for(type)
-      options = block_map.fetch(type)
+      options = fetch_or_default_item(type)
       return reset_wrapper unless options.key?(:wrapper)
 
       new_options = nokogiri_options(*options.fetch(:wrapper))
@@ -57,7 +60,7 @@ module DraftjsExporter
     end
 
     def block_options(type)
-      block_map.fetch(type).fetch(:element)
+      fetch_or_default_item(type).fetch(:element)
     end
 
     def create_wrapper(options)
