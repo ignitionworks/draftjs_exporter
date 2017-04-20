@@ -124,6 +124,38 @@ RSpec.describe DraftjsExporter::HTML do
         expect(mapper.call(input)).to eq(expected_output)
       end
 
+      it 'ignore unkown entity type' do
+        input = {
+          entityMap: {
+            '0' => {
+              type: 'UNKNOWN_TYPE',
+            }
+          },
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'some paragraph text',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 0
+                }
+              ]
+            }
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+<div>some paragraph text</div>
+        OUTPUT
+
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+
       context 'with deeply_symbolized entities' do
         it 'decodes the content_state to html' do
           input = {
