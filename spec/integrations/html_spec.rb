@@ -239,5 +239,39 @@ RSpec.describe DraftjsExporter::HTML do
         expect(mapper.call(input)).to eq(expected_output)
       end
     end
+
+    context 'with UTF-8 encoding' do
+      it 'leaves non-latin letters as-is' do
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: 'ckf8d',
+              text: 'Russian: Привет, мир!',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {}
+            },
+            {
+              key: 'fi809',
+              text: 'Japanese: 曖昧さ回避',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {}
+            }
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+          <ul class=\"public-DraftStyleDefault-ul\">\n<li>Russian: Привет, мир!</li>\n<li>Japanese: 曖昧さ回避</li>\n</ul>
+        OUTPUT
+
+        expect(mapper.call(input, encoding: 'UTF-8')).to eq(expected_output)
+      end
+    end
   end
 end
