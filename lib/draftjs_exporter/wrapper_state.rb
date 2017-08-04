@@ -15,7 +15,11 @@ module DraftjsExporter
     end
 
     def to_s
-      fragment.to_s
+      to_html
+    end
+
+    def to_html(options = {})
+      fragment.to_html(options)
     end
 
     private
