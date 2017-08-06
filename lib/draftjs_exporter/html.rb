@@ -15,14 +15,14 @@ module DraftjsExporter
       @entity_decorators = entity_decorators
     end
 
-    def call(content_state)
+    def call(content_state, options = {})
       wrapper_state = WrapperState.new(block_map)
       content_state.fetch(:blocks, []).each do |block|
         element = wrapper_state.element_for(block)
         entity_map = content_state.fetch(:entityMap, {})
         block_contents(element, block, entity_map)
       end
-      wrapper_state.to_s
+      wrapper_state.to_html(options)
     end
 
     private
