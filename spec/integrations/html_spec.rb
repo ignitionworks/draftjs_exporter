@@ -15,7 +15,29 @@ RSpec.describe DraftjsExporter::HTML do
           element: 'li',
           wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
         },
-        'unstyled' => { element: 'div' }
+        'unstyled' => { element: 'div' },
+        'atomic' => [
+          {
+            match_data: {
+              type: 'checklist',
+              checked: true
+            },
+            options: {
+              element: 'span',
+              attrs: { id: 'hello-world' }
+            }
+          },
+          {
+            match_data: {
+              type: 'story',
+              name: 'yvonne'
+            },
+            options: {
+              element: 'article',
+              attrs: { title: 'paradise' }
+            }
+          }
+        ]
       },
       style_map: {
         'ITALIC' => { fontStyle: 'italic' }
@@ -44,12 +66,45 @@ RSpec.describe DraftjsExporter::HTML do
               depth: 0,
               inlineStyleRanges: [],
               entityRanges: []
-            }
+            },
+            {
+              key: '6udia',
+              text: 'Hello my beautiful children',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {
+                type: 'checklist',
+                checked: true
+              }
+            },
+            {
+              key: '7j1l',
+              text: 'Nice to meet me',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {
+                type: 'story',
+                name: 'yvonne'
+              }
+            },
+            {
+              key: 'jq89x',
+              text: 'Wishful thinking',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: { type: 'task' }
+            },
           ]
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>some paragraph text</div>
+<h1>Header</h1><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">Nice to meet me</article><div>Wishful thinking</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
