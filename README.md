@@ -19,12 +19,24 @@ config = {
     'LINK' => DraftjsExporter::Entities::Link.new(className: 'link')
   },
   block_map: {
-    'header-one' => { element: 'h1' },
+    'header-one' => { element: 'h1', attrs: { id: 'foo-bar' }},
     'unordered-list-item' => {
       element: 'li',
       wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
     },
-    'unstyled' => { element: 'div' }
+    'unstyled' => { element: 'div' },
+    # For atomic blocks, we match data to find the right block blocks.
+    # Unmatched atomic blocks will use the un-styled block options.
+    'atomic' => [
+      {
+        match_data: {
+          type: 'task',
+          checked: true,
+          title: 'hello'
+        },
+        options: { element: 'span' }
+      }
+    ]
   },
   style_map: {
     'ITALIC' => { fontStyle: 'italic' }
@@ -73,10 +85,34 @@ exporter.call({
           key: 0
         }
       ]
+    },
+    {
+      key: '7dhap',
+      text: 'hello world',
+      type: 'atomic',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+      data: {
+        type: 'task',
+        checked: true,
+        title: 'hello'
+      }
+    },
+    {
+      key: '6usk2',
+      text: 'foo bar foo',
+      type: 'atomic',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+      data: {
+        type: 'checklist'
+      }
     }
   ]
 })
-# => "<h1>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div>"
+# => "<h1 id='foo-bar'>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div><span>hello world</span><div>foo bar foo</div>"
 ```
 
 ## Tests
@@ -84,4 +120,3 @@ exporter.call({
 ```bash
 $ rspec
 ```
-
