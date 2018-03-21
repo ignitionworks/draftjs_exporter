@@ -13,7 +13,10 @@ RSpec.describe DraftjsExporter::HTML do
         'header-one' => { element: 'h1' },
         'unordered-list-item' => {
           element: 'li',
-          wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
+          wrapper: {
+            element: 'ul',
+            attrs: { class: 'public-DraftStyleDefault-ul' }
+          }
         },
         'unstyled' => { element: 'div' },
         'atomic' => [

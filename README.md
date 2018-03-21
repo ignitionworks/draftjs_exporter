@@ -22,7 +22,10 @@ config = {
     'header-one' => { element: 'h1', attrs: { id: 'foo-bar' }},
     'unordered-list-item' => {
       element: 'li',
-      wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
+      wrapper: {
+        element: 'ul',
+        attrs: { class: 'public-DraftStyleDefault-ul' }
+      }
     },
     'unstyled' => { element: 'div' },
     # For atomic blocks, we match data to find the right block blocks.

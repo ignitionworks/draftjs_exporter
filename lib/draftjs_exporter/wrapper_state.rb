@@ -55,7 +55,7 @@ module DraftjsExporter
     def parent_for(options)
       return reset_wrapper unless options.key?(:wrapper)
 
-      new_options = nokogiri_options(*options.fetch(:wrapper))
+      new_options = [options[:wrapper][:element], options[:wrapper].fetch(:attrs, {})]
       return wrapper_element if new_options == wrapper_options
 
       create_wrapper(new_options)
@@ -64,13 +64,6 @@ module DraftjsExporter
     def reset_wrapper
       set_wrapper(fragment)
       wrapper_element
-    end
-
-    def nokogiri_options(element_name, element_attributes)
-      config = element_attributes || {}
-      options = {}
-      options[:class] = config.fetch(:className) if config.key?(:className)
-      [element_name, options]
     end
 
     def atomic_block_map
