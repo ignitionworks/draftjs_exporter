@@ -37,7 +37,8 @@ RSpec.describe DraftjsExporter::HTML do
             },
             options: {
               element: 'article',
-              attrs: { title: 'paradise' }
+              attrs: { title: 'paradise' },
+              prefix: '( ) '
             }
           }
         ]
@@ -107,7 +108,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">Nice to meet me</article><div>Wishful thinking</div>
+<h1>Header</h1><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
