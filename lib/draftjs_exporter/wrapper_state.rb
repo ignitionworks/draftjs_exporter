@@ -46,6 +46,7 @@ module DraftjsExporter
     def create_element(block_options)
       document.create_element(
         block_options[:element],
+        block_options.fetch(:prefix, ''),
         block_options.fetch(:attrs, {})
       ).tap do |e|
         parent_for(block_options).add_child(e)
