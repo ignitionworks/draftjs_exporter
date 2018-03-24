@@ -66,16 +66,16 @@ module DraftjsExporter
         Command.new(:start_text, 0),
         Command.new(:stop_text, block.fetch(:text).size)
       ] +
-      build_range_commands(
-        :inline_style,
-        :style,
-        block.fetch(:inlineStyleRanges) || []
-      ) +
-      build_range_commands(
-        :entity,
-        :key,
-        block.fetch(:entityRanges) || []
-      )
+        build_range_commands(
+          :inline_style,
+          :style,
+          block.fetch(:inlineStyleRanges) || []
+        ) +
+        build_range_commands(
+          :entity,
+          :key,
+          block.fetch(:entityRanges) || []
+        )
     end
 
     def build_range_commands(name, data_key, ranges)
