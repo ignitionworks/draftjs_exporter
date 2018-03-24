@@ -68,8 +68,8 @@ RSpec.describe DraftjsExporter::HTML do
               text: 'some paragraph text',
               type: 'unstyled',
               depth: 0,
-              inlineStyleRanges: [],
-              entityRanges: []
+              inlineStyleRanges: nil,
+              entityRanges: nil
             },
             {
               key: '6udia',
