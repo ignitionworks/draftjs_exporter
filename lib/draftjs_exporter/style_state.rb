@@ -27,11 +27,12 @@ module DraftjsExporter
     end
 
     def styles_css
-      styles.map { |style|
-        style_map.fetch(style)
-      }.inject({}, :merge).map { |key, value|
-        "#{hyphenize(key)}: #{value};"
-      }.join
+      styles
+        .select { |style| style_map[style].present? }
+        .map { |style| style_map.fetch(style) }
+        .inject({}, :merge).map { |key, value|
+          "#{hyphenize(key)}: #{value};"
+        }.join
     end
 
     def hyphenize(string)
