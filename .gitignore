@@ -15,3 +15,5 @@
 
 # Code coverage results
 /coverage
+
+.byebug_history

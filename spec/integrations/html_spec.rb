@@ -130,6 +130,11 @@ RSpec.describe DraftjsExporter::HTML do
                   offset: 0,
                   length: 4,
                   style: 'ITALIC'
+                },
+                {
+                  offset: 5,
+                  length: 5,
+                  style: 'BOLD'
                 }
               ],
               entityRanges: []
