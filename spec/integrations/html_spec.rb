@@ -2,6 +2,7 @@
 require 'spec_helper'
 require 'draftjs_exporter/html'
 require 'draftjs_exporter/entities/link'
+require 'byebug'
 
 RSpec.describe DraftjsExporter::HTML do
   subject(:mapper) do
@@ -64,6 +65,14 @@ RSpec.describe DraftjsExporter::HTML do
               entityRanges: []
             },
             {
+              key: '5s7g9',
+              text: 'some random stuff',
+              type: 'star-wars',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
               key: 'dem5p',
               text: 'some paragraph text',
               type: 'unstyled',
@@ -108,7 +117,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
+<h1>Header</h1><div>some random stuff</div><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
