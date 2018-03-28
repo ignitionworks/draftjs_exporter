@@ -32,8 +32,11 @@ module DraftjsExporter
 
     def start_command(command)
       entity_details = entity_for(command.data)
+      decorator = entity_decorators.fetch(
+        entity_details.fetch(:type),
+        DraftjsExporter::Entities::Null.new()
+      )
 
-      decorator = entity_decorators.fetch(entity_details.fetch(:type))
       parent_element = entity_stack.last.first
       new_element = decorator.call(parent_element, entity_details)
       entity_stack.push([new_element, entity_details])

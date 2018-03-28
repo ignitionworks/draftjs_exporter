@@ -2,6 +2,7 @@
 require 'spec_helper'
 require 'draftjs_exporter/html'
 require 'draftjs_exporter/entities/link'
+require 'byebug'
 
 RSpec.describe DraftjsExporter::HTML do
   subject(:mapper) do
@@ -13,9 +14,35 @@ RSpec.describe DraftjsExporter::HTML do
         'header-one' => { element: 'h1' },
         'unordered-list-item' => {
           element: 'li',
-          wrapper: ['ul', { className: 'public-DraftStyleDefault-ul' }]
+          wrapper: {
+            element: 'ul',
+            attrs: { class: 'public-DraftStyleDefault-ul' }
+          }
         },
-        'unstyled' => { element: 'div' }
+        'unstyled' => { element: 'div' },
+        'atomic' => [
+          {
+            match_data: {
+              type: 'checklist',
+              checked: true
+            },
+            options: {
+              element: 'span',
+              attrs: { id: 'hello-world' }
+            }
+          },
+          {
+            match_data: {
+              type: 'story',
+              name: 'yvonne'
+            },
+            options: {
+              element: 'article',
+              attrs: { title: 'paradise' },
+              prefix: '( ) '
+            }
+          }
+        ]
       },
       style_map: {
         'ITALIC' => { fontStyle: 'italic' }
@@ -38,18 +65,59 @@ RSpec.describe DraftjsExporter::HTML do
               entityRanges: []
             },
             {
+              key: '5s7g9',
+              text: 'some random stuff',
+              type: 'star-wars',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
               key: 'dem5p',
               text: 'some paragraph text',
               type: 'unstyled',
               depth: 0,
+              inlineStyleRanges: nil,
+              entityRanges: nil
+            },
+            {
+              key: '6udia',
+              text: 'Hello my beautiful children',
+              type: 'atomic',
+              depth: 0,
               inlineStyleRanges: [],
-              entityRanges: []
-            }
+              entityRanges: [],
+              data: {
+                type: 'checklist',
+                checked: true
+              }
+            },
+            {
+              key: '7j1l',
+              text: 'Nice to meet me',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {
+                type: 'story',
+                name: 'yvonne'
+              }
+            },
+            {
+              key: 'jq89x',
+              text: 'Wishful thinking',
+              type: 'atomic',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: { type: 'task' }
+            },
           ]
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>some paragraph text</div>
+<h1>Header</h1><div>some random stuff</div><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -71,6 +139,11 @@ RSpec.describe DraftjsExporter::HTML do
                   offset: 0,
                   length: 4,
                   style: 'ITALIC'
+                },
+                {
+                  offset: 5,
+                  length: 5,
+                  style: 'BOLD'
                 }
               ],
               entityRanges: []
@@ -97,6 +170,13 @@ RSpec.describe DraftjsExporter::HTML do
               data: {
                 url: 'http://example.com'
               }
+            },
+            '1' => {
+              type: 'ALIEN',
+              mutability: 'MUTABLE',
+              data: {
+                gender: 'male'
+              }
             }
           },
           blocks: [
@@ -113,12 +193,26 @@ RSpec.describe DraftjsExporter::HTML do
                   key: 0
                 }
               ]
-            }
+            },
+            {
+              key: 'ay89q',
+              text: 'some random stuff',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 1
+                }
+              ]
+            },
           ]
         }
 
         expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
+<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div><div>some random stuff</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)

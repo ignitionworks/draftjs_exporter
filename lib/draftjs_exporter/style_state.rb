@@ -18,20 +18,24 @@ module DraftjsExporter
     end
 
     def text?
-      styles.empty?
+      supported_styles.empty?
     end
 
     def element_attributes
-      return {} unless styles.any?
+      return {} unless supported_styles.any?
       { style: styles_css }
     end
 
     def styles_css
-      styles.map { |style|
-        style_map.fetch(style)
-      }.inject({}, :merge).map { |key, value|
-        "#{hyphenize(key)}: #{value};"
-      }.join
+      supported_styles
+        .map { |style| style_map.fetch(style) }
+        .inject({}, :merge).map { |key, value|
+          "#{hyphenize(key)}: #{value};"
+        }.join
+    end
+
+    def supported_styles
+      styles.select { |style| !style_map[style].nil? }
     end
 
     def hyphenize(string)
