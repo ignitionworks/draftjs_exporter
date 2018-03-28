@@ -170,6 +170,13 @@ RSpec.describe DraftjsExporter::HTML do
               data: {
                 url: 'http://example.com'
               }
+            },
+            '1' => {
+              type: 'ALIEN',
+              mutability: 'MUTABLE',
+              data: {
+                gender: 'male'
+              }
             }
           },
           blocks: [
@@ -186,12 +193,26 @@ RSpec.describe DraftjsExporter::HTML do
                   key: 0
                 }
               ]
-            }
+            },
+            {
+              key: 'ay89q',
+              text: 'some random stuff',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 1
+                }
+              ]
+            },
           ]
         }
 
         expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
+<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div><div>some random stuff</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
