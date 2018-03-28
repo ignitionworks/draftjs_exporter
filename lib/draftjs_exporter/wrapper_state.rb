@@ -9,13 +9,13 @@ module DraftjsExporter
 
     def element_for(block)
       type = block.fetch(:type, 'unstyled')
-      unstyled_option = block_map['unstyled']
+      unstyled_options = block_map['unstyled']
 
-      return create_element(block_map.fetch(type, unstyled_option)) if type != 'atomic'
+      return create_element(block_map.fetch(type, unstyled_options)) if type != 'atomic'
 
       atomic_block_options = find_atomic_block_options(block)
 
-      return create_element(unstyled_option) if atomic_block_options.nil?
+      return create_element(unstyled_options) if atomic_block_options.nil?
 
       create_element(atomic_block_options)
     end

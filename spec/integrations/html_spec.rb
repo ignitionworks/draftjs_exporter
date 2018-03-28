@@ -2,7 +2,6 @@
 require 'spec_helper'
 require 'draftjs_exporter/html'
 require 'draftjs_exporter/entities/link'
-require 'byebug'
 
 RSpec.describe DraftjsExporter::HTML do
   subject(:mapper) do
