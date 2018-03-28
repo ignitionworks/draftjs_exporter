@@ -64,6 +64,14 @@ RSpec.describe DraftjsExporter::HTML do
               entityRanges: []
             },
             {
+              key: '5s7g9',
+              text: 'some random stuff',
+              type: 'star-wars',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
               key: 'dem5p',
               text: 'some paragraph text',
               type: 'unstyled',
@@ -108,7 +116,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
+<h1>Header</h1><div>some random stuff</div><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -161,6 +169,13 @@ RSpec.describe DraftjsExporter::HTML do
               data: {
                 url: 'http://example.com'
               }
+            },
+            '1' => {
+              type: 'ALIEN',
+              mutability: 'MUTABLE',
+              data: {
+                gender: 'male'
+              }
             }
           },
           blocks: [
@@ -177,12 +192,26 @@ RSpec.describe DraftjsExporter::HTML do
                   key: 0
                 }
               ]
-            }
+            },
+            {
+              key: 'ay89q',
+              text: 'some random stuff',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 1
+                }
+              ]
+            },
           ]
         }
 
         expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
+<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div><div>some random stuff</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
