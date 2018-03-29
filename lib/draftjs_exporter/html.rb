@@ -59,12 +59,12 @@ module DraftjsExporter
         parent = node
       end
 
-      node =
-        if state.text?
-          document.create_text_node(text)
-        else
-          document.create_element('span', text, state.element_attributes)
-        end
+      if state.text?
+        node = cdata_node(document, text)
+      else
+        node = document.create_element('span', state.element_attributes)
+        node.add_child(cdata_node(document, text))
+      end
 
       parent.add_child(node)
     end
@@ -107,6 +107,20 @@ module DraftjsExporter
           Command.new("stop_#{name}".to_sym, stop, data)
         ]
       }
+    end
+
+    def cdata_node(document, content)
+      Nokogiri::XML::CDATA.new(
+        document,
+        # Escape HTML special characters. Necessary because Nokogiri doesn't
+        # escape quotes but we need to for syncing to Salesforce content note.
+        content
+          .gsub(/&/, '&amp;')
+          .gsub(/'/, '&#39;')
+          .gsub(/"/, '&quot;')
+          .gsub(/</, '&lt;')
+          .gsub(/>/, '&gt;')
+      )
     end
   end
 end
