@@ -42,13 +42,18 @@ module DraftjsExporter
 
     def add_node(element, text, state)
       document = element.document
-      node = if state.text?
-               document.create_text_node(text)
-             else
-               document.create_element('span', text, state.element_attributes)
-             end
+      node = document.create_element('span', text, state.element_attributes)
 
-      node.content = node.content.gsub(/'/, "&#39;").gsub(/"/, '&quot;')
+      # if state.text?
+      #          document.create_text_node(text)
+      #        else
+      #
+      #        end
+
+      node_content = node.content.gsub(/'/, "&#39;").gsub(/"/, '&quot;')
+      node.content = ''
+      node.add_child(Nokogiri::XML::CDATA.new(document, node_content))
+
       element.add_child(node)
     end
 
