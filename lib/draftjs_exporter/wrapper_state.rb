@@ -3,7 +3,7 @@ module DraftjsExporter
     def initialize(block_map)
       @block_map = block_map
       @document = Nokogiri::HTML::Document.new
-      @document.encoding = 'UTF-8'
+      @document.encoding = 'UTF-8' # To not transform HTML entities
       @fragment = Nokogiri::HTML::DocumentFragment.new(document)
       reset_wrapper
     end
