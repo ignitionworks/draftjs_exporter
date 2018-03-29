@@ -43,21 +43,7 @@ module DraftjsExporter
 
     def add_node(element, text, state)
       document = element.document
-      parent = element
-
-      if !state.element_style_tags.empty?
-        first_tag, *tags = state.element_style_tags
-
-        parent = document.create_element(first_tag)
-        node = tags.reduce(parent) do |last_node, tag|
-          current_node = document.create_element(tag)
-          last_node.add_node(current_node)
-          current_node
-        end
-
-        parent.add_child(node)
-        parent = node
-      end
+      parent = build_nested_tag_element(state.element_style_tags, element)
 
       if state.text?
         node = cdata_node(document, text)
@@ -67,6 +53,17 @@ module DraftjsExporter
       end
 
       parent.add_child(node)
+    end
+
+    # Return the last tag
+    def build_nested_tag_element(tags, parent)
+      document = parent.document
+
+      tags.reduce(parent) do |last_parent, tag|
+        current_node = document.create_element(tag)
+        last_parent.add_child(current_node)
+        current_node
+      end
     end
 
     def build_command_groups(block)

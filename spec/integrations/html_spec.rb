@@ -147,6 +147,16 @@ RSpec.describe DraftjsExporter::HTML do
                   style: 'ITALIC'
                 },
                 {
+                  offset: 0,
+                  length: 4,
+                  style: 'UNDERLINE'
+                },
+                {
+                  offset: 0,
+                  length: 4,
+                  style: 'STRIKETHROUGH'
+                },
+                {
                   offset: 5,
                   length: 5,
                   style: 'BOLD'
@@ -158,7 +168,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<div>\n<span style="font-style: italic;">some</span> paragraph text\n</div>
+<div>\n<i><u><s><span style=\"font-style: italic;\">some</span></s></u></i> <b>parag</b>raph text\n</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
