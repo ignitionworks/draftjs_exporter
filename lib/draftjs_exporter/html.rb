@@ -44,12 +44,9 @@ module DraftjsExporter
       document = element.document
       if state.text?
         node = cdata_node(document, text)
-        # node = document.create_text_node(text)
       else
-        node = document.create_element('span', text, state.element_attributes)
-        node_content = node.content
-        node.content = nil
-        node.add_child(cdata_node(document, node_content))
+        node = document.create_element('span', state.element_attributes)
+        node.add_child(cdata_node(document, text))
       end
       element.add_child(node)
     end
@@ -97,7 +94,8 @@ module DraftjsExporter
     def cdata_node(document, content)
       Nokogiri::XML::CDATA.new(
         document,
-        # Escape HTML special characters
+        # Escape HTML special characters. Necessary because we want to
+        # manually escape quotes.
         content
           .gsub(/&/, '&amp;')
           .gsub(/'/, '&#39;')
