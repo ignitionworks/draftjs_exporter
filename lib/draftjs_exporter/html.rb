@@ -42,18 +42,15 @@ module DraftjsExporter
 
     def add_node(element, text, state)
       document = element.document
-      node = document.create_element('span', text, state.element_attributes)
-
-      # if state.text?
-      #          document.create_text_node(text)
-      #        else
-      #
-      #        end
-
-      node_content = node.content.gsub(/'/, "&#39;").gsub(/"/, '&quot;')
-      node.content = ''
-      node.add_child(Nokogiri::XML::CDATA.new(document, node_content))
-
+      if state.text?
+        node = cdata_node(document, text)
+        # node = document.create_text_node(text)
+      else
+        node = document.create_element('span', text, state.element_attributes)
+        node_content = node.content
+        node.content = nil
+        node.add_child(cdata_node(document, node_content))
+      end
       element.add_child(node)
     end
 
@@ -95,6 +92,18 @@ module DraftjsExporter
           Command.new("stop_#{name}".to_sym, stop, data)
         ]
       }
+    end
+
+    def cdata_node(document, content)
+      Nokogiri::XML::CDATA.new(
+        document,
+        content
+          .gsub(/'/, '&#39;')
+          .gsub(/"/, '&quot;')
+          .gsub(/</, '&lt;')
+          .gsub(/>/, '&gt;')
+          .gsub(/&/, '&amp;')
+      )
     end
   end
 end
