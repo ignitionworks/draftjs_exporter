@@ -95,7 +95,7 @@ module DraftjsExporter
       Nokogiri::XML::CDATA.new(
         document,
         # Escape HTML special characters. Necessary because Nokogiri doesn't
-        # escape quotes but we want to.
+        # escape quotes but we need to for syncing to Salesforce content note.
         content
           .gsub(/&/, '&amp;')
           .gsub(/'/, '&#39;')
