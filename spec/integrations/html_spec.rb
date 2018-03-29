@@ -65,6 +65,14 @@ RSpec.describe DraftjsExporter::HTML do
               entityRanges: []
             },
             {
+              key: '5s7g9',
+              text: 'some random stuff',
+              type: 'star-wars',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
               key: 'dem5p',
               text: 'some paragraph text',
               type: 'unstyled',
@@ -109,13 +117,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>
-Header
-</h1><div>
-some paragraph text
-</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>
-Wishful thinking
-</div>
+<h1>\nHeader\n</h1><div>\nsome random stuff\n</div><div>\nsome paragraph text\n</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>\nWishful thinking\n</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -150,9 +152,7 @@ Wishful thinking
         }
 
         expected_output = <<-OUTPUT.strip
-<div>
-<span style="font-style: italic;">some</span> paragraph text
-</div>
+<div>\n<span style="font-style: italic;">some</span> paragraph text\n</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -168,6 +168,13 @@ Wishful thinking
               mutability: 'MUTABLE',
               data: {
                 url: 'http://example.com'
+              }
+            },
+            '1' => {
+              type: 'ALIEN',
+              mutability: 'MUTABLE',
+              data: {
+                gender: 'male'
               }
             }
           },
@@ -185,14 +192,26 @@ Wishful thinking
                   key: 0
                 }
               ]
-            }
+            },
+            {
+              key: 'ay89q',
+              text: 'some random stuff',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [
+                {
+                  offset: 5,
+                  length: 9,
+                  key: 1
+                }
+              ]
+            },
           ]
         }
 
         expected_output = <<-OUTPUT.strip
-<div>
-some <a href="http://example.com" class="foobar-baz">paragraph</a> text
-</div>
+<div>\nsome <a href=\"http://example.com\" class=\"foobar-baz\">paragraph</a> text\n</div><div>\nsome random stuff\n</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -229,9 +248,7 @@ some <a href="http://example.com" class="foobar-baz">paragraph</a> text
           }
 
           expected_output = <<-OUTPUT.strip
-<div>
-some <a href="http://example.com" class="foobar-baz">paragraph</a> text
-</div>
+<div>\nsome <a href="http://example.com" class="foobar-baz">paragraph</a> text\n</div>
           OUTPUT
 
           expect(mapper.call(input)).to eq(expected_output)
