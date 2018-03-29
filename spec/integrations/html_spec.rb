@@ -2,6 +2,7 @@
 require 'spec_helper'
 require 'draftjs_exporter/html'
 require 'draftjs_exporter/entities/link'
+require 'byebug'
 
 RSpec.describe DraftjsExporter::HTML do
   subject(:mapper) do
@@ -45,6 +46,12 @@ RSpec.describe DraftjsExporter::HTML do
       },
       style_map: {
         'ITALIC' => { fontStyle: 'italic' }
+      },
+      style_block_map: {
+        'ITALIC' => 'i',
+        'BOLD' => 'b',
+        'UNDERLINE' => 'u',
+        'STRIKETHROUGH' => 's'
       }
     )
   end

@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 module DraftjsExporter
   class StyleState
-    attr_reader :styles, :style_map
+    attr_reader :styles, :style_map, :style_block_map
 
-    def initialize(style_map)
+    def initialize(style_map, style_block_map)
       @styles = []
       @style_map = style_map
+      @style_block_map = style_block_map
     end
 
     def apply(command)
@@ -24,6 +25,10 @@ module DraftjsExporter
     def element_attributes
       return {} unless supported_styles.any?
       { style: styles_css }
+    end
+
+    def element_style_tags
+      style_block_map.select { |key, value| styles.include?(key) }.values
     end
 
     def styles_css

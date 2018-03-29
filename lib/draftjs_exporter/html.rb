@@ -7,12 +7,13 @@ require 'draftjs_exporter/command'
 
 module DraftjsExporter
   class HTML
-    attr_reader :block_map, :style_map, :entity_decorators
+    attr_reader :block_map, :style_map, :entity_decorators, :style_block_map
 
-    def initialize(block_map:, style_map:, entity_decorators:)
+    def initialize(block_map:, style_map:, entity_decorators:, style_block_map:)
       @block_map = block_map
       @style_map = style_map
       @entity_decorators = entity_decorators
+      @style_block_map = style_block_map
     end
 
     def call(content_state, options = {})
@@ -28,7 +29,7 @@ module DraftjsExporter
     private
 
     def block_contents(element, block, entity_map)
-      style_state = StyleState.new(style_map)
+      style_state = StyleState.new(style_map, style_block_map)
       entity_state = EntityState.new(element, entity_decorators, entity_map)
       build_command_groups(block).each do |text, commands|
         commands.each do |command|
@@ -42,12 +43,30 @@ module DraftjsExporter
 
     def add_node(element, text, state)
       document = element.document
-      node = if state.text?
-               document.create_text_node(text)
-             else
-               document.create_element('span', text, state.element_attributes)
-             end
-      element.add_child(node)
+      parent = element
+
+      if !state.element_style_tags.empty?
+        first_tag, *tags = state.element_style_tags
+
+        parent = document.create_element(first_tag)
+        node = tags.reduce(parent) do |last_node, tag|
+          current_node = document.create_element(tag)
+          last_node.add_node(current_node)
+          current_node
+        end
+
+        parent.add_child(node)
+        parent = node
+      end
+
+      node =
+        if state.text?
+          document.create_text_node(text)
+        else
+          document.create_element('span', text, state.element_attributes)
+        end
+
+      parent.add_child(node)
     end
 
     def build_command_groups(block)
