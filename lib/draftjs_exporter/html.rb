@@ -97,6 +97,7 @@ module DraftjsExporter
     def cdata_node(document, content)
       Nokogiri::XML::CDATA.new(
         document,
+        # Escape HTML special characters
         content
           .gsub(/&/, '&amp;')
           .gsub(/'/, '&#39;')

@@ -2,6 +2,7 @@
 require 'spec_helper'
 require 'draftjs_exporter/html'
 require 'draftjs_exporter/entities/link'
+require 'byebug'
 
 RSpec.describe DraftjsExporter::HTML do
   subject(:mapper) do
@@ -108,7 +109,13 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>Header</h1><div>some paragraph text</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>Wishful thinking</div>
+<h1>
+Header
+</h1><div>
+some paragraph text
+</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>
+Wishful thinking
+</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -144,7 +151,8 @@ RSpec.describe DraftjsExporter::HTML do
 
         expected_output = <<-OUTPUT.strip
 <div>
-<span style="font-style: italic;">some</span> paragraph text</div>
+<span style="font-style: italic;">some</span> paragraph text
+</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -182,7 +190,9 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
+<div>
+some <a href="http://example.com" class="foobar-baz">paragraph</a> text
+</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -219,7 +229,9 @@ RSpec.describe DraftjsExporter::HTML do
           }
 
           expected_output = <<-OUTPUT.strip
-<div>some <a href="http://example.com" class="foobar-baz">paragraph</a> text</div>
+<div>
+some <a href="http://example.com" class="foobar-baz">paragraph</a> text
+</div>
           OUTPUT
 
           expect(mapper.call(input)).to eq(expected_output)
@@ -297,7 +309,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<ul class="public-DraftStyleDefault-ul">\n<li>item1</li>\n<li>item2</li>\n</ul>
+<ul class="public-DraftStyleDefault-ul">\n<li>\nitem1\n</li>\n<li>\nitem2\n</li>\n</ul>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
@@ -331,10 +343,44 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-          <ul class=\"public-DraftStyleDefault-ul\">\n<li>Russian: Привет, мир!</li>\n<li>Japanese: 曖昧さ回避</li>\n</ul>
+          <ul class=\"public-DraftStyleDefault-ul\">\n<li>\nRussian: Привет, мир!\n</li>\n<li>\nJapanese: 曖昧さ回避\n</li>\n</ul>
         OUTPUT
 
         expect(mapper.call(input, encoding: 'UTF-8')).to eq(expected_output)
+      end
+    end
+
+    context 'with HTML special characters' do
+      it 'escapes those characters' do
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: 'ckf8d',
+              text: '<> Hey &',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {}
+            },
+            {
+              key: 'fi809',
+              text: '\' Foo \' "Bar" ',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: [],
+              data: {}
+            }
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+          <ul class=\"public-DraftStyleDefault-ul\">\n<li>\n&lt;&gt; Hey &amp;\n</li>\n<li>\n&#39; Foo &#39; &quot;Bar&quot; \n</li>\n</ul>
+        OUTPUT
+
+        expect(mapper.call(input)).to eq(expected_output)
       end
     end
   end
