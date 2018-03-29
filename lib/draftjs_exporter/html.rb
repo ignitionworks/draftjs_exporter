@@ -94,8 +94,8 @@ module DraftjsExporter
     def cdata_node(document, content)
       Nokogiri::XML::CDATA.new(
         document,
-        # Escape HTML special characters. Necessary because we want to
-        # manually escape quotes.
+        # Escape HTML special characters. Necessary because Nokogiri doesn't
+        # escape quotes but we want to.
         content
           .gsub(/&/, '&amp;')
           .gsub(/'/, '&#39;')
