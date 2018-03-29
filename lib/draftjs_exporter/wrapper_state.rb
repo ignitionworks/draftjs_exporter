@@ -9,9 +9,15 @@ module DraftjsExporter
 
     def element_for(block)
       type = block.fetch(:type, 'unstyled')
-      document.create_element(block_options(type)).tap do |e|
-        parent_for(type).add_child(e)
-      end
+      unstyled_options = block_map['unstyled']
+
+      return create_element(block_map.fetch(type, unstyled_options)) if type != 'atomic'
+
+      atomic_block_options = find_atomic_block_options(block)
+
+      return create_element(unstyled_options) if atomic_block_options.nil?
+
+      create_element(atomic_block_options)
     end
 
     def to_s
@@ -38,11 +44,20 @@ module DraftjsExporter
       @wrapper[1]
     end
 
-    def parent_for(type)
-      options = block_map.fetch(type)
+    def create_element(block_options)
+      document.create_element(
+        block_options[:element],
+        block_options.fetch(:prefix, ''),
+        block_options.fetch(:attrs, {})
+      ).tap do |e|
+        parent_for(block_options).add_child(e)
+      end
+    end
+
+    def parent_for(options)
       return reset_wrapper unless options.key?(:wrapper)
 
-      new_options = nokogiri_options(*options.fetch(:wrapper))
+      new_options = [options[:wrapper][:element], options[:wrapper].fetch(:attrs, {})]
       return wrapper_element if new_options == wrapper_options
 
       create_wrapper(new_options)
@@ -53,15 +68,8 @@ module DraftjsExporter
       wrapper_element
     end
 
-    def nokogiri_options(element_name, element_attributes)
-      config = element_attributes || {}
-      options = {}
-      options[:class] = config.fetch(:className) if config.key?(:className)
-      [element_name, options]
-    end
-
-    def block_options(type)
-      block_map.fetch(type).fetch(:element)
+    def atomic_block_map
+      block_map.fetch('atomic', [])
     end
 
     def create_wrapper(options)
@@ -69,6 +77,22 @@ module DraftjsExporter
         reset_wrapper.add_child(new_element)
         set_wrapper(new_element, options)
       end
+    end
+
+    def find_atomic_block_options(block)
+      block_data = block.fetch(:data, {})
+
+      block_export = atomic_block_map.find do |block|
+        data_to_match = block.fetch(:match_data, {})
+
+        data_to_match.all? do |key, value|
+          block_data[key] == value
+        end
+      end
+
+      return nil if block_export.nil?
+
+      block_export[:options]
     end
   end
 end
