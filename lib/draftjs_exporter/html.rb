@@ -48,7 +48,7 @@ module DraftjsExporter
                document.create_element('span', text, state.element_attributes)
              end
 
-      node.content = note.content.gsub(/'/, "&#39;").gsub(/"/, '&quot;')
+      node.content = node.content.gsub(/'/, "&#39;").gsub(/"/, '&quot;')
       element.add_child(node)
     end
 
