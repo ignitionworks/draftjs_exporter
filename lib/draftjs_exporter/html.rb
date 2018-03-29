@@ -98,11 +98,11 @@ module DraftjsExporter
       Nokogiri::XML::CDATA.new(
         document,
         content
+          .gsub(/&/, '&amp;')
           .gsub(/'/, '&#39;')
           .gsub(/"/, '&quot;')
           .gsub(/</, '&lt;')
           .gsub(/>/, '&gt;')
-          .gsub(/&/, '&amp;')
       )
     end
   end
