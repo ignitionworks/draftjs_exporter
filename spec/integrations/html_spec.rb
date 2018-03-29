@@ -73,7 +73,7 @@ RSpec.describe DraftjsExporter::HTML do
             },
             {
               key: 'dem5p',
-              text: 'some paragraph text',
+              text: 'Name: Dana Gjonbalaj', 
               type: 'unstyled',
               depth: 0,
               inlineStyleRanges: nil,
@@ -116,7 +116,7 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-<h1>\nHeader\n</h1><div>\nsome random stuff\n</div><div>\nsome paragraph text\n</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>\nWishful thinking\n</div>
+<h1>\nHeader\n</h1><div>\nsome random stuff\n</div><div>\nName: Dana Gjonbalaj\n</div><span id="hello-world">Hello my beautiful children</span><article title="paradise">( ) Nice to meet me</article><div>\nWishful thinking\n</div>
         OUTPUT
 
         expect(mapper.call(input)).to eq(expected_output)
