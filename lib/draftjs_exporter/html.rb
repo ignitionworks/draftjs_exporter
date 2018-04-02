@@ -7,12 +7,13 @@ require 'draftjs_exporter/command'
 
 module DraftjsExporter
   class HTML
-    attr_reader :block_map, :style_map, :entity_decorators
+    attr_reader :block_map, :style_map, :entity_decorators, :style_block_map
 
-    def initialize(block_map:, style_map:, entity_decorators:)
+    def initialize(block_map:, style_map:, entity_decorators:, style_block_map:)
       @block_map = block_map
       @style_map = style_map
       @entity_decorators = entity_decorators
+      @style_block_map = style_block_map
     end
 
     def call(content_state, options = {})
@@ -28,7 +29,7 @@ module DraftjsExporter
     private
 
     def block_contents(element, block, entity_map)
-      style_state = StyleState.new(style_map)
+      style_state = StyleState.new(style_map, style_block_map)
       entity_state = EntityState.new(element, entity_decorators, entity_map)
       build_command_groups(block).each do |text, commands|
         commands.each do |command|
@@ -40,15 +41,29 @@ module DraftjsExporter
       end
     end
 
-    def add_node(element, text, state)
+    def add_node(element, text, style_state)
       document = element.document
-      if state.text?
+      parent = build_nested_tag_element(style_state.element_style_tags, element)
+
+      if style_state.text?
         node = cdata_node(document, text)
       else
-        node = document.create_element('span', state.element_attributes)
+        node = document.create_element('span', style_state.element_attributes)
         node.add_child(cdata_node(document, text))
       end
-      element.add_child(node)
+
+      parent.add_child(node)
+    end
+
+    # Return the last tag
+    def build_nested_tag_element(tags, parent)
+      document = parent.document
+
+      tags.reduce(parent) do |last_parent, tag|
+        current_node = document.create_element(tag)
+        last_parent.add_child(current_node)
+        current_node
+      end
     end
 
     def build_command_groups(block)
