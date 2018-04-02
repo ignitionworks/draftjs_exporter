@@ -43,6 +43,10 @@ config = {
   },
   style_map: {
     'ITALIC' => { fontStyle: 'italic' }
+  },
+  style_block_map: {
+    'ITALIC' => 'i',
+    'BOLD' => 'b'
   }
 }
 
@@ -79,6 +83,11 @@ exporter.call({
           offset: 0,
           length: 4,
           style: 'ITALIC'
+        },
+        {
+          offset: 0,
+          length: 4,
+          style: 'BOLD'
         }
       ],
       entityRanges: [
@@ -115,7 +124,7 @@ exporter.call({
     }
   ]
 })
-# => "<h1 id='foo-bar'>Header</h1><div>\n<span style=\"font-style: italic;\">some</span> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div><span>hello world</span><div>foo bar foo</div>"
+# => "<h1 id='foo-bar'>Header</h1><div>\n<i><b><span style=\"font-style: italic;\">some</span></b></i> <a href=\"http://example.com\" class=\"link\">paragraph</a> text</div><span>hello world</span><div>foo bar foo</div>"
 ```
 
 ## Tests
