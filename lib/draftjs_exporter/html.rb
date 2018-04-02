@@ -41,14 +41,14 @@ module DraftjsExporter
       end
     end
 
-    def add_node(element, text, state)
+    def add_node(element, text, style_state)
       document = element.document
-      parent = build_nested_tag_element(state.element_style_tags, element)
+      parent = build_nested_tag_element(style_state.element_style_tags, element)
 
-      if state.text?
+      if style_state.text?
         node = cdata_node(document, text)
       else
-        node = document.create_element('span', state.element_attributes)
+        node = document.create_element('span', style_state.element_attributes)
         node.add_child(cdata_node(document, text))
       end
 
