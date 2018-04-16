@@ -19,9 +19,11 @@ RSpec.describe DraftjsExporter::HTML do
       },
       style_map: {
         'ITALIC' => { fontStyle: 'italic' }
-      }
+      },
+      style_options: style_options
     )
   end
+  let(:style_options) { {} }
 
   describe '#call' do
     context 'with different blocks' do
@@ -267,10 +269,53 @@ RSpec.describe DraftjsExporter::HTML do
         }
 
         expected_output = <<-OUTPUT.strip
-          <ul class=\"public-DraftStyleDefault-ul\">\n<li>Russian: Привет, мир!</li>\n<li>Japanese: 曖昧さ回避</li>\n</ul>
+              <ul class=\"public-DraftStyleDefault-ul\">\n<li>Russian: Привет, мир!</li>\n<li>Japanese: 曖昧さ回避</li>\n</ul>
         OUTPUT
 
         expect(mapper.call(input, encoding: 'UTF-8')).to eq(expected_output)
+      end
+    end
+
+    context 'strange styles' do
+      let(:input) {
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'some paragraph text',
+              type: 'unstyled',
+              depth: 0,
+              inlineStyleRanges: [
+                {
+                  offset: 0,
+                  length: 4,
+                  style: 'rgba(0.5,0.5,0.5,0.1)'
+                }
+              ],
+              entityRanges: []
+            }
+          ]
+        }
+      }
+
+      let(:expected_output) {
+        <<-OUTPUT.strip
+        <div>
+<span>some</span> paragraph text</div>
+        OUTPUT
+      }
+      it 'generates warnings for the missing styles.' do
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+
+      context "style options set to :error" do
+        let(:style_options) { { unknown_styles: :error } }
+        it 'generates errors for the missing styles.' do
+          expect {
+            mapper.call(input)
+          }.to raise_error(KeyError, "Cannot find style rgba(0.5,0.5,0.5,0.1)")
+        end
       end
     end
   end
