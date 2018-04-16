@@ -9,10 +9,11 @@ module DraftjsExporter
   class HTML
     attr_reader :block_map, :style_map, :entity_decorators
 
-    def initialize(block_map:, style_map:, entity_decorators:)
+    def initialize(block_map:, style_map:, entity_decorators:, style_options: {})
       @block_map = block_map
       @style_map = style_map
       @entity_decorators = entity_decorators
+      @style_options = style_options
     end
 
     def call(content_state, options = {})
@@ -28,7 +29,7 @@ module DraftjsExporter
     private
 
     def block_contents(element, block, entity_map)
-      style_state = StyleState.new(style_map)
+      style_state = StyleState.new(style_map, **@style_options)
       entity_state = EntityState.new(element, entity_decorators, entity_map)
       build_command_groups(block).each do |text, commands|
         commands.each do |command|

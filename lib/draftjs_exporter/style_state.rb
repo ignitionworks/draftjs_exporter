@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 module DraftjsExporter
   class StyleState
-    attr_reader :styles, :style_map
+    attr_reader :styles, :style_map, :unknown_styles
 
-    def initialize(style_map)
+    def initialize(style_map, unknown_styles: :warn)
       @styles = []
       @style_map = style_map
+      @unknown_styles = unknown_styles
     end
 
     def apply(command)
@@ -22,16 +23,34 @@ module DraftjsExporter
     end
 
     def element_attributes
-      return {} unless styles.any?
-      { style: styles_css }
+      css_attributes = calculate_styles
+      if css_attributes.any?
+        { style: css_attributes.join }
+      else
+        {}
+      end
     end
 
-    def styles_css
+    private
+
+    def calculate_styles
       styles.map { |style|
-        style_map.fetch(style)
-      }.inject({}, :merge).map { |key, value|
+        fetch_style(style)
+      }.compact.inject({}, :merge).map { |key, value|
         "#{hyphenize(key)}: #{value};"
-      }.join
+      }
+    end
+
+    def fetch_style(style)
+      style_map.fetch(style) { |style|
+        case unknown_styles
+        when :warn, :ignore
+          warn("Missing definition for style: #{style}") if unknown_styles == :warn
+          nil
+        else
+          raise KeyError, "Cannot find style #{style}"
+        end
+      }
     end
 
     def hyphenize(string)
