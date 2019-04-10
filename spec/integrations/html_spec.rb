@@ -353,6 +353,70 @@ RSpec.describe DraftjsExporter::HTML do
       end
     end
 
+    context 'with nested blocks' do
+      it 'decodes the content_state to html' do
+        input = {
+          entityMap: {},
+          blocks: [
+            {
+              key: 'dem5p',
+              text: 'item1',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem6p',
+              text: 'item2',
+              type: 'unordered-list-item',
+              depth: 1,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem7p',
+              text: 'item3',
+              type: 'unordered-list-item',
+              depth: 1,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem8p',
+              text: 'item4',
+              type: 'unordered-list-item',
+              depth: 2,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem9p',
+              text: 'item5',
+              type: 'unordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem0p',
+              text: 'item6',
+              type: 'unordered-list-item',
+              depth: 1,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+          ]
+        }
+
+        expected_output = <<-OUTPUT.strip
+
+        OUTPUT
+
+        expect(mapper.call(input)).to eq(expected_output)
+      end
+    end
+
     context 'with UTF-8 encoding' do
       it 'leaves non-latin letters as-is' do
         input = {

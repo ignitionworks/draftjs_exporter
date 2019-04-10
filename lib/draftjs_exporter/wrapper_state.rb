@@ -44,12 +44,14 @@ module DraftjsExporter
       @wrappers[depth] = [element, options]
     end
 
-    def wrapper_element
-      @wrappers.last[0] || fragment
+    def wrapper_element(wrapper_index = nil)
+      return (@wrappers.last[0] || fragment) if wrapper_index.nil?
+      @wrappers[wrapper_index][0]
     end
 
-    def wrapper_options
-      @wrappers.last[1]
+    def wrapper_options(wrapper_index = nil)
+      return @wrappers.last[1] if wrapper_index.nil?
+      @wrappers[wrapper_index][1]
     end
 
     def create_element(block, block_options)
@@ -58,8 +60,7 @@ module DraftjsExporter
         block_options.fetch(:prefix, ''),
         block_options.fetch(:attrs, {})
       ).tap do |e|
-        parent = parent_for(block, block_options)
-        parent.add_child(e)
+        parent_for(block, block_options).add_child(e)
       end
     end
 
@@ -68,10 +69,18 @@ module DraftjsExporter
 
       depth = block[:depth]
       new_options = [options[:wrapper][:element], options[:wrapper].fetch(:attrs, {})]
+      should_reset = new_options != wrapper_options
+      should_create_nest = depth > 0 && depth >= @wrappers.length
 
-      return create_wrapper(new_options) if new_options != wrapper_options
+      if should_reset || should_create_nest
+        return create_wrapper(
+          new_options,
+          should_reset: should_reset,
+          depth: depth
+        ) 
+      end
 
-      return wrapper_element if depth == 0
+      wrapper_element(depth)
     end
 
     def reset_wrapper
@@ -84,10 +93,15 @@ module DraftjsExporter
       block_map.fetch('atomic', [])
     end
 
-    def create_wrapper(options)
+    def create_wrapper(options, should_reset: true, depth: 0)
       document.create_element(*options).tap do |new_element|
-        reset_wrapper.add_child(new_element)
-        set_wrapper(new_element, options)
+        target_wrapper = should_reset ? reset_wrapper : wrapper_element(depth - 1)
+        target_wrapper.add_child(new_element)
+        set_wrapper(
+          new_element, 
+          options, 
+          should_reset ? 0 : depth
+        )
       end
     end
 
