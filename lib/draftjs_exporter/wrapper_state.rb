@@ -40,18 +40,18 @@ module DraftjsExporter
       @wrappers = []
     end
 
-    def set_wrapper(element, options = {}, depth = 0)
-      @wrappers[depth] = [element, options]
+    def set_wrapper(element, options = {}, should_nest: false)
+      @wrappers[
+        should_nest ? @wrappers.length : 0
+      ] = [element, options]
     end
 
-    def wrapper_element(wrapper_index = nil)
-      return (@wrappers.last[0] || fragment) if wrapper_index.nil?
-      @wrappers[wrapper_index][0]
+    def wrapper_element
+      @wrappers.last[0] || fragment
     end
 
-    def wrapper_options(wrapper_index = nil)
-      return @wrappers.last[1] if wrapper_index.nil?
-      @wrappers[wrapper_index][1]
+    def wrapper_options
+      @wrappers.last[1]
     end
 
     def create_element(block, block_options)
@@ -67,20 +67,22 @@ module DraftjsExporter
     def parent_for(block, options)
       return reset_wrapper unless options.key?(:wrapper)
 
-      depth = block[:depth]
       new_options = [options[:wrapper][:element], options[:wrapper].fetch(:attrs, {})]
-      should_reset = new_options != wrapper_options
-      should_create_nest = depth > 0 && depth >= @wrappers.length
 
-      if should_reset || should_create_nest
-        return create_wrapper(
-          new_options,
-          should_reset: should_reset,
-          depth: depth
-        ) 
-      end
+      create_wrapper(new_options, should_nest: false) if new_options != wrapper_options
 
-      wrapper_element(depth)
+      depth = block[:depth]
+      level_difference = depth - (@wrappers.length - 1)
+
+      if level_difference > 0
+        level_difference.times do 
+          create_wrapper(new_options, should_nest: true) 
+        end
+      else
+        @wrappers.pop(-level_difference)
+      end   
+
+      wrapper_element
     end
 
     def reset_wrapper
@@ -93,15 +95,11 @@ module DraftjsExporter
       block_map.fetch('atomic', [])
     end
 
-    def create_wrapper(options, should_reset: true, depth: 0)
+    def create_wrapper(options, should_nest: true)
       document.create_element(*options).tap do |new_element|
-        target_wrapper = should_reset ? reset_wrapper : wrapper_element(depth - 1)
+        target_wrapper = should_nest ? wrapper_element : reset_wrapper;
         target_wrapper.add_child(new_element)
-        set_wrapper(
-          new_element, 
-          options, 
-          should_reset ? 0 : depth
-        )
+        set_wrapper(new_element, options, should_nest: should_nest)
       end
     end
 

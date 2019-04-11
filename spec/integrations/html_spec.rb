@@ -11,6 +11,13 @@ RSpec.describe DraftjsExporter::HTML do
       },
       block_map: {
         'header-one' => { element: 'h1' },
+        'ordered-list-item' => {
+          element: 'li',
+          wrapper: {
+            element: 'ol',
+            attrs: { class: 'public-DraftStyleDefault-ol' }
+          }
+        },
         'unordered-list-item' => {
           element: 'li',
           wrapper: {
@@ -402,7 +409,39 @@ RSpec.describe DraftjsExporter::HTML do
               key: 'dem0p',
               text: 'item6',
               type: 'unordered-list-item',
+              depth: 2,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem1p',
+              text: 'item7',
+              type: 'unordered-list-item',
               depth: 1,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem2p',
+              text: 'item8',
+              type: 'unordered-list-item',
+              depth: 5,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem3p',
+              text: 'item9',
+              type: 'ordered-list-item',
+              depth: 0,
+              inlineStyleRanges: [],
+              entityRanges: []
+            },
+            {
+              key: 'dem4p',
+              text: 'item10',
+              type: 'unordered-list-item',
+              depth: 3,
               inlineStyleRanges: [],
               entityRanges: []
             },
